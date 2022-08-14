@@ -1,26 +1,18 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useMemo } from "react";
+import "./App.scss";
+import { generate } from "./layout-generator";
 
-function App() {
+const App: React.FC = () => {
+  const wordList = ["set", "eat", "seat", "east", "tea"];
+  const b = generate(wordList);
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <pre>{b.map((a) => `${a.map((a) => a).join(",")}\n`)}</pre>
       </header>
     </div>
   );
-}
+};
 
 export default App;
