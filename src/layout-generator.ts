@@ -3,28 +3,7 @@ enum DIRECTION {
   HORIZONTAL,
 }
 
-const updateBoard = (
-  board: string[][],
-  rowStart: number,
-  rowEnd: number,
-  colStart: number,
-  colEnd: number,
-  word: string,
-  dir: DIRECTION
-) => {
-  //console.log("inner", word, { rowStart, rowEnd, colStart, colEnd, dir });
-  for (let i = rowStart; i < rowEnd; i++) {
-    if (!board[i]) {
-      board[i] = [];
-    }
-
-    for (let j = colStart; j < colEnd; j++) {
-      const char =
-        dir === DIRECTION.VERTICAL ? word[i - rowStart] : word[j - colStart];
-      board[i][j] = char;
-    }
-  }
-};
+export const EMPTY = "EMPTY";
 
 const isVerticalBoardSectionAvailable = (
   board: string[][],
@@ -33,19 +12,15 @@ const isVerticalBoardSectionAvailable = (
   offset: number,
   length: number
 ) => {
-  const start = row + offset; // 8 - 3
-  //     s
-  //     e
-  //     a
-  // s e t
+  const start = row + offset;
   const end = start + length - 1;
 
   for (let i = start; i <= end; i++) {
-    if (i === end && board[i + 1] && board[i + 1][col] !== "_") {
+    if (i === end && board[i + 1] && board[i + 1][col] !== EMPTY) {
       return false;
     }
 
-    if (i === start && board[i - 1] && board[i - 1][col] !== "_") {
+    if (i === start && board[i - 1] && board[i - 1][col] !== EMPTY) {
       return false;
     }
 
@@ -53,7 +28,7 @@ const isVerticalBoardSectionAvailable = (
       continue;
     }
 
-    if (board[i][col - 1] !== "_" || board[i][col + 1] !== "_") {
+    if (board[i][col - 1] !== EMPTY || board[i][col + 1] !== EMPTY) {
       return false;
     }
   }
@@ -69,19 +44,13 @@ const inserVerticalWordSection = (
   length: number,
   word: string
 ) => {
-  const start = row + offset; // 8 -4
-  //     s
-  //     e
-  //     a
-  // s e t
+  const start = row + offset;
   const end = start + length - 1;
   const charQueue = word.split("");
 
   for (let i = start; i <= end; i++) {
     board[i][col] = charQueue.shift() || "";
   }
-
-  console.log(JSON.parse(JSON.stringify(board)));
 };
 
 const isHorizontalBoardSectionAvailable = (
@@ -91,19 +60,15 @@ const isHorizontalBoardSectionAvailable = (
   offset: number,
   length: number
 ) => {
-  const start = col + offset; // 8 - 3
-  //     s
-  //     e
-  //     a
-  // s e t
+  const start = col + offset;
   const end = start + length - 1;
 
   for (let i = start; i <= end; i++) {
-    if (i === end && board[row][i + 1] !== "_") {
+    if (i === end && board[row][i + 1] !== EMPTY) {
       return false;
     }
 
-    if (i === start && board[row][i - 1] !== "_") {
+    if (i === start && board[row][i - 1] !== EMPTY) {
       return false;
     }
 
@@ -112,8 +77,8 @@ const isHorizontalBoardSectionAvailable = (
     }
 
     if (
-      (row > 0 && board[row - 1][i] !== "_") ||
-      (row < board.length - 1 && board[row + 1][i] !== "_")
+      (row > 0 && board[row - 1][i] !== EMPTY) ||
+      (row < board.length - 1 && board[row + 1][i] !== EMPTY)
     ) {
       return false;
     }
@@ -130,29 +95,20 @@ const inserHorizontalWordSection = (
   length: number,
   word: string
 ) => {
-  const start = col + offset; // 8 -4
-  //     s
-  //     e
-  //     a
-  // s e t
+  const start = col + offset;
   const end = start + length - 1;
   const charQueue = word.split("");
 
   for (let i = start; i <= end; i++) {
     board[row][i] = charQueue.shift() || "";
   }
-
-  console.log(JSON.parse(JSON.stringify(board)));
 };
 
 const createBoard = (size: number) => {
-  return [...new Array(size)].map(() => [...new Array(size)].fill("_"));
+  return [...new Array(size)].map(() => [...new Array(size)].fill(EMPTY));
 };
 
-export const generate = (words: string[]) => {
-  console.clear();
-  console.log(words);
-
+export const generate = (words: string[]): [string[][], string[]] => {
   const possibleMaxBoardSize = words.reduce(
     (prev, current) => prev + current.length,
     0
@@ -169,7 +125,6 @@ export const generate = (words: string[]) => {
 
   const randomIndex = Math.floor(Math.random() * queue.length);
   const initialPickedWord = queue.splice(randomIndex, 1)[0];
-  console.log("--init-->", initialPickedWord, randomIndex);
 
   if (placed.length === 0) {
     const initialDirection =
@@ -227,16 +182,6 @@ export const generate = (words: string[]) => {
       }
 
       const matchedIndex = matchedWordWithChar.indexOf(char);
-      console.log(
-        "--word-->",
-        placed[i],
-        char,
-        j,
-        "--matched-->",
-        matchedWordWithChar,
-        matchedIndex
-      );
-
       const currentDirection =
         direction === DIRECTION.HORIZONTAL
           ? DIRECTION.VERTICAL
@@ -297,7 +242,5 @@ export const generate = (words: string[]) => {
       }
     }
   }
-
-  console.log(queue);
-  return board;
+  return [board, queue];
 };

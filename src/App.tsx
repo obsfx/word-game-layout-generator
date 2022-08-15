@@ -1,16 +1,56 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.scss";
-import { generate } from "./layout-generator";
+import { EMPTY, generate } from "./layout-generator";
 
 const App: React.FC = () => {
-  const wordList = ["set", "eat", "seat", "east", "tea"];
-  const b = generate(wordList);
+  const wordList = useMemo(() => {
+    return ["set", "eat", "seat", "east", "tea"];
+  }, []);
+
+  const [currentBoard, setCurrentBoard] = useState<string[][]>([]);
+  const [notPlacedWords, setNotPlacedWords] = useState<string[]>([]);
+
+  const generateNewBoard = useCallback(() => {
+    const [board, notPlacedWords] = generate(wordList);
+    setCurrentBoard(board);
+    setNotPlacedWords(notPlacedWords);
+  }, [wordList]);
+
+  useEffect(() => {
+    generateNewBoard();
+  }, [generateNewBoard]);
 
   return (
     <div className="App">
-      <header className="App-header">
-        <pre>{b.map((a) => `${a.map((a) => a).join(",")}\n`)}</pre>
-      </header>
+      <div className="word-list">
+        Word List ({wordList.length}): {wordList.join(", ")}
+      </div>
+
+      <div className="word-list">
+        Couldn't Placed Words ({notPlacedWords.length}):{" "}
+        {notPlacedWords.join(", ")}
+      </div>
+
+      <button onClick={generateNewBoard}>Generate</button>
+
+      <div className="board-wrapper">
+        {currentBoard.map((row, idx) => {
+          return (
+            <div key={idx} className="board-wrapper__row">
+              {row.map((tile, idx) => (
+                <div
+                  key={idx}
+                  className={`board-wrapper__row__tile${
+                    tile !== EMPTY ? " filled" : ""
+                  }`}
+                >
+                  {tile !== EMPTY ? tile : ""}
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

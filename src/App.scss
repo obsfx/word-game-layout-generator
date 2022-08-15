@@ -1,0 +1,28 @@
+.App {
+  padding: 16px;
+}
+
+.board-wrapper {
+  margin-top: 16px;
+
+  &__row {
+    display: flex;
+    &__tile {
+      display: flex;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      background-color: #f2f2f2;
+      margin: 1px;
+      justify-content: center;
+      align-items: center;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 22px;
+
+      &.filled {
+        background-color: #ffe595;
+      }
+    }
+  }
+}
