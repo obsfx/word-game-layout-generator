@@ -4,6 +4,8 @@
 
 A word game layout generator built using React and TypeScript.
 
+https://word-game-layout-generator.vercel.app/
+
 ### To run
 
 + `git@github.com:obsfx/word-game-layout-generator.git`
